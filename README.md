@@ -1,73 +1,39 @@
-# React + TypeScript + Vite
+# ECHO // CLONE
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Voice Cloning & Text-to-Speech Interface
 
-Currently, two official plugins are available:
+🔗 **Live Demo**: [https://k09-0.github.io/echo-clone/](https://k09-0.github.io/echo-clone/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- 🎙️ **Voice Cloning** — Upload audio files or record your voice directly
+- 🗣️ **Text-to-Speech** — Generate speech from text using cloned voices
+- 🌐 **Bilingual** — Full support for English & Russian (toggle in-app)
+- ☀️/🌙 **Dark & Light Themes** — Choose your preferred visual mode
+- 📱 **Mobile-First** — Fully responsive, works on phones and desktops
+- 📤 **Export Audio** — Download WAV/MP3 for use in Suno, Udio, and other AI music platforms
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- React 19 + TypeScript + Vite
+- Tailwind CSS + shadcn/ui
+- Three.js / WebGL — Fluid waveform visualization
+- Fish Audio API — Free voice cloning & TTS
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting Started
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+1. Get a free API key at [fish.audio](https://fish.audio)
+2. Enter it in Settings (stored locally in your browser)
+3. Create your first voice clone
+4. Start synthesizing speech!
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Screenshots
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- **Dashboard** with fluid audio waveform hero
+- **Create Clone** — upload or record
+- **Text-to-Speech** with voice settings
+- **Settings** — API key, language, theme
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## License
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+MIT
