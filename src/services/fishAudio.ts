@@ -45,7 +45,6 @@ export async function generateTTS(text: string, modelId: string, options?: { spe
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
-      'model': 's2-pro',
     },
     body: JSON.stringify({
       text,
