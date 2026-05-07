@@ -5,7 +5,7 @@ import { useI18n } from '@/hooks/useI18n';
 import Header from '@/components/Header';
 import AudioPlayer from '@/components/AudioPlayer';
 import { useTTS } from '@/hooks/useTTS';
-import { getApiKeyFromStorage, downloadAudio } from '@/services/fishAudio';
+import { getApiKeyFromStorage } from '@/services/fishAudio';
 
 interface LocationState {
   voiceId?: string;
@@ -25,85 +25,25 @@ export default function TTSScreen() {
   const [style, setStyle] = useState(0.5);
   const [generatedAudio, setGeneratedAudio] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
-  const [generatedBlob, setGeneratedBlob] = useState<Blob | null>(null);
 
   const { synthesize, isGenerating, error } = useTTS();
   const apiKey = getApiKeyFromStorage();
 
   const handleGenerate = async () => {
     if (!text.trim()) return;
-    if (!apiKey) return;
+    if (!apiKey) {
+      return; // API key warning is already shown in UI
+    }
 
-    // For demo without real API: generate a mock audio blob using Web Audio
+    // Call real Fish Audio API
     try {
-      const audioCtx = new AudioContext();
-      const duration = Math.min(text.length * 0.08, 10);
-      const sampleRate = audioCtx.sampleRate;
-      const length = duration * sampleRate;
-      const buffer = audioCtx.createBuffer(1, length, sampleRate);
-      const data = buffer.getChannelData(0);
-
-      for (let i = 0; i < length; i++) {
-        const t_val = i / sampleRate;
-        const freq = 200 + Math.sin(t_val * 3) * 50;
-        data[i] = Math.sin(2 * Math.PI * freq * t_val) * 0.3 * Math.exp(-t_val * 0.3);
-        // Add some "voice-like" modulation
-        data[i] += Math.sin(2 * Math.PI * freq * 2 * t_val) * 0.1 * Math.exp(-t_val * 0.5);
-        data[i] *= Math.min(1, t_val * 10) * Math.min(1, (duration - t_val) * 2);
-      }
-
-      // Convert AudioBuffer to WAV blob
-      const wavBlob = audioBufferToWav(buffer);
-      const url = URL.createObjectURL(wavBlob);
-      setGeneratedAudio(url);
-      setGeneratedBlob(wavBlob);
-      audioCtx.close();
-    } catch {
-      // Fallback to API
       const result = await synthesize(text, state?.voiceId || 'default', { speed });
       if (result?.audioUrl) {
         setGeneratedAudio(result.audioUrl);
       }
+    } catch (err) {
+      // Error is handled in useTTS hook
     }
-  };
-
-  const audioBufferToWav = (buffer: AudioBuffer): Blob => {
-    const length = buffer.length;
-    const numChannels = buffer.numberOfChannels;
-    const sampleRate = buffer.sampleRate;
-    const arrayBuffer = new ArrayBuffer(44 + length * numChannels * 2);
-    const view = new DataView(arrayBuffer);
-
-    // WAV header
-    const writeString = (offset: number, string: string) => {
-      for (let i = 0; i < string.length; i++) {
-        view.setUint8(offset + i, string.charCodeAt(i));
-      }
-    };
-
-    writeString(0, 'RIFF');
-    view.setUint32(4, 36 + length * numChannels * 2, true);
-    writeString(8, 'WAVE');
-    writeString(12, 'fmt ');
-    view.setUint32(16, 16, true);
-    view.setUint16(20, 1, true);
-    view.setUint16(22, numChannels, true);
-    view.setUint32(24, sampleRate, true);
-    view.setUint32(28, sampleRate * numChannels * 2, true);
-    view.setUint16(32, numChannels * 2, true);
-    view.setUint16(34, 16, true);
-    writeString(36, 'data');
-    view.setUint32(40, length * numChannels * 2, true);
-
-    const data = buffer.getChannelData(0);
-    let offset = 44;
-    for (let i = 0; i < length; i++) {
-      const sample = Math.max(-1, Math.min(1, data[i]));
-      view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
-      offset += 2;
-    }
-
-    return new Blob([arrayBuffer], { type: 'audio/wav' });
   };
 
   const handlePaste = async () => {
@@ -116,9 +56,7 @@ export default function TTSScreen() {
   };
 
   const handleExport = () => {
-    if (generatedBlob) {
-      downloadAudio(generatedBlob, `echo-tts-${Date.now()}.wav`);
-    } else if (generatedAudio) {
+    if (generatedAudio) {
       const a = document.createElement('a');
       a.href = generatedAudio;
       a.download = `echo-tts-${Date.now()}.wav`;

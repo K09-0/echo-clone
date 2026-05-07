@@ -1,8 +1,14 @@
 {
-  "name": "my-app",
+  "name": "echo-clone",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Voice Cloning & Text-to-Speech Interface - Create AI voices from your own audio samples",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/K09-0/echo-clone"
+  },
+  "author": "K09-0",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
